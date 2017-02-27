@@ -1,0 +1,20 @@
+{
+  "name": "jrsaunders/bacs",
+  "description": "BACS Helper",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "John Saunders",
+      "email": "john@yettimedia.co.uk"
+    }
+  ],
+  "require": {
+    "php": ">=5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bacs\\": "src/"
+    }
+  }
+}
