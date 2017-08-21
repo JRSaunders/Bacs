@@ -24,6 +24,15 @@ abstract class Base implements RequiredMethods
 
     protected $output = '';
 
+	/**
+	 * Base constructor.
+	 *
+	 * @param null $payFromSortCode
+	 * @param null $payFromAccountNumber
+	 * @param null $payFromName
+	 * @param string $defaultCurrency
+	 * @param null $validCurrencyArray
+	 */
     public function __construct($payFromSortCode = null, $payFromAccountNumber = null, $payFromName = null, $defaultCurrency = 'GBP', $validCurrencyArray = null)
     {
         $this->setPayFromAccount(new Account($payFromSortCode, $payFromAccountNumber, $payFromName));
@@ -114,7 +123,7 @@ abstract class Base implements RequiredMethods
 
 
     /**
-     * @return $payFromAccount
+     * @return Account $payFromAccount
      */
     public function getPayFromAccount()
     {
@@ -129,6 +138,13 @@ abstract class Base implements RequiredMethods
         $this->payFromAccount = $payFromAccount;
     }
 
+	/**
+	 * @param null $sortCode
+	 * @param null $accountNumber
+	 * @param null $name
+	 * @param null $paymentAmount
+	 * @param null $currency
+	 */
     public function addPayment($sortCode = null, $accountNumber = null, $name = null, $paymentAmount = null, $currency = null)
     {
 
@@ -147,6 +163,9 @@ abstract class Base implements RequiredMethods
 
     }
 
+	/**
+	 * @return array|bool
+	 */
     public function getPayments()
     {
         if (count($this->payments)) {
@@ -155,6 +174,12 @@ abstract class Base implements RequiredMethods
         return false;
     }
 
+	/**
+	 * @param $currency
+	 * @param bool $ouputString
+	 *
+	 * @return bool|null|string
+	 */
     public function validCurrency($currency, $ouputString = false)
     {
         if ($currency === null) {
@@ -182,11 +207,22 @@ abstract class Base implements RequiredMethods
         return $this->defaultCurrency;
     }
 
+	/**
+	 * @param $errors
+	 * @param null $sortCode
+	 * @param null $accountNumber
+	 * @param null $name
+	 * @param null $paymentAmount
+	 * @param null $currency
+	 */
     private function addFailedPayment($errors, $sortCode = null, $accountNumber = null, $name = null, $paymentAmount = null, $currency = null)
     {
         $this->failedPayments[] = array($errors, $sortCode, $accountNumber, $name, $paymentAmount, $currency);
     }
 
+	/**
+	 * @param $str
+	 */
     protected function output($str)
     {
         $this->output .= $str;
@@ -197,6 +233,9 @@ abstract class Base implements RequiredMethods
         return $this->output;
     }
 
+	/**
+	 * @param $name
+	 */
     public function outputToCsv($name)
     {
         header('Content-Type: text / csv; charset = utf-8');

@@ -42,6 +42,9 @@ class Account
         return str_pad($input, $length, $fillWith, STR_PAD_LEFT);
     }
 
+	/**
+	 * @return bool|\stdClass
+	 */
     public function getObject()
     {
         if ($this->getErrors()) {
