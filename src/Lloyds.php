@@ -35,7 +35,7 @@ class Lloyds extends Base {
 		$payeeStatementReference = "Bacs Payment"
 	) {
 		parent::__construct( $payFromSortCode, $payFromAccountNumber, $payFromName, $defaultCurrency );
-		$this->setPayeeStatementReference($payeeStatementReference);
+		$this->setPayeeStatementReference( $payeeStatementReference );
 		$this->setStatementReference( $debitStatementReference );
 	}
 
@@ -44,8 +44,8 @@ class Lloyds extends Base {
 		$payments = $this->getPayments();
 		$date     = new \DateTime();
 		$today    = $date->format( "Ymd" );
-		$stateRef      = $this->getStatementReference();
-		$uniqueId = substr(substr($stateRef,0,5). '-' .time(),0,16);
+		$stateRef = $this->getStatementReference();
+		$uniqueId = substr( substr( $stateRef, 0, 5 ) . '-' . time(), 0, 16 );
 		$this->output( "H,{$today},{$uniqueId}\n" );
 		$date->modify( "+ 2 day" );
 		$payDate       = $date->format( "Ymd" );
@@ -54,15 +54,15 @@ class Lloyds extends Base {
 		$this->output( "D,{$payDate},{$stateRef},{$sortCode}-{$accountNumber}\n" );
 		if ( $payments ) {
 			foreach ( $payments as $payment ) {
-				$payAmmount       = (string)number_format($payment->paymentAmount, 2, '.','');
+				$payAmmount       = (string) number_format( $payment->paymentAmount, 2, '.', '' );
 				$payName          = $payment->name;
 				$payAccountNumber = $payment->accountNumber;
-				$paySortCode      = $payment->formattedSortCode;
-				$payRef = $this->getPayeeStatementReference();
+				$paySortCode      = (string) str_replace( '-', '', $payment->formattedSortCode );
+				$payRef           = $this->getPayeeStatementReference();
 				$this->output( "C,{$payAmmount},{$payName},{$payAccountNumber},{$paySortCode},{$payRef}\n" );
 			}
 		}
-		$this->output("T");
+		$this->output( "T" );
 
 		return $this->getOutput();
 	}
