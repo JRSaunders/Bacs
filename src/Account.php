@@ -1,191 +1,181 @@
 <?php
+
 namespace Bacs;
 
 /**
  * Class Account
  * @package Bacs
  */
-class Account
-{
-    private $accountNumber = null;
-    private $sortCode = null;
-    private $name = null;
-    private $errors = null;
+class Account {
+	private $accountNumber = null;
+	private $sortCode = null;
+	private $name = null;
+	private $errors = null;
 
-    public function __construct($sortCode = null, $accountNumber = null, $name = null)
-    {
-        $args = func_get_args();
-        foreach ($args as $arg) {
-            $this->isStringCheck($arg);
-        }
-        $this->setAccountNumber($accountNumber);
-        $this->setSortCode($sortCode);
-        $this->setName($name);
-    }
+	public function __construct( $sortCode = null, $accountNumber = null, $name = null ) {
+		$args = func_get_args();
+		foreach ( $args as $arg ) {
+			$this->isStringCheck( $arg );
+		}
+		$this->setAccountNumber( $accountNumber );
+		$this->setSortCode( $sortCode );
+		$this->setName( $name );
+	}
 
-    /**
-     * @return null
-     */
-    public function getName()
-    {
+	/**
+	 * @return null
+	 */
+	public function getName() {
 
-        if ($this->name == null) {
-            throw new \Exception('No Name Set');
-        }
+		if ( $this->name == null ) {
+			throw new \Exception( 'No Name Set' );
+		}
 
-        return strtoupper(substr($this->name, 0, 18));
-    }
+		return strtoupper( substr( $this->name, 0, 18 ) );
+	}
 
-    public function fillNumber($input, $length = 8, $fillWith = '0')
-    {
-        $input = (string)$input;
-        return str_pad($input, $length, $fillWith, STR_PAD_LEFT);
-    }
+	public function fillNumber( $input, $length = 8, $fillWith = '0' ) {
+		$input = (string) $input;
+
+		return str_pad( $input, $length, $fillWith, STR_PAD_LEFT );
+	}
 
 	/**
 	 * @return bool|\stdClass
 	 */
-    public function getObject()
-    {
-        if ($this->getErrors()) {
-            return false;
-        }
+	public function getObject() {
+		if ( $this->getErrors() ) {
+			return false;
+		}
 
-        $returnObject = new \stdClass();
+		$returnObject = new \stdClass();
 
-        $returnObject->accountNumber = $this->getAccountNumber();
-        $returnObject->sortCode = $this->getSortCode();
-        $returnObject->formattedSortCode = $this->getPrintFormattedSortCode();
-        $returnObject->name = $this->getName();
-        return $returnObject;
-    }
+		$returnObject->accountNumber     = $this->getAccountNumber();
+		$returnObject->sortCode          = $this->getSortCode();
+		$returnObject->formattedSortCode = $this->getPrintFormattedSortCode();
+		$returnObject->name              = $this->getName();
 
-    public function isStringCheck($var)
-    {
-        if (is_string($var)) {
-            return true;
-        }
-        throw new \Exception($var . ' is not string');
-        return false;
-    }
+		return $returnObject;
+	}
 
-    /**
-     * @param null $name
-     */
-    private function setName($name)
-    {
-        $this->name = $name;
-    }
+	public function isStringCheck( $var ) {
+		if ( is_string( $var ) ) {
+			return true;
+		}
+		throw new \Exception( $var . ' is not string' );
 
-    public function stripLeadingZeros($number)
-    {
-        $number = (string)$number;
-        $number = ltrim($number, '0');
+		return false;
+	}
 
-        return $number;
+	/**
+	 * @param null $name
+	 */
+	private function setName( $name ) {
+		$this->name = $name;
+	}
 
-    }
+	public function stripLeadingZeros( $number ) {
+		$number = (string) $number;
+		$number = ltrim( $number, '0' );
 
-    /**
-     * @return null
-     */
-    public function getAccountNumber()
-    {
+		return $number;
 
-        if ($this->accountNumber == null) {
-            throw new \Exception('No  Account Number Set');
-        }
+	}
 
-        return substr($this->fillNumber($this->stripLeadingZeros($this->accountNumber), 8), 0, 8);
+	/**
+	 * @return null
+	 */
+	public function getAccountNumber() {
 
-    }
+		if ( $this->accountNumber == null ) {
+			throw new \Exception( 'No  Account Number Set' );
+		}
+		$accountNumber = preg_replace( "/[^0-9]/", "", $this->accountNumber );
 
-    /**
-     * @param null $accountNumber
-     */
-    private function setAccountNumber($accountNumber)
-    {
+		return substr( $this->fillNumber( $this->stripLeadingZeros( $accountNumber ), 8 ), 0, 8 );
 
-        $this->accountNumber = $accountNumber;
-    }
+	}
 
-    public function getPrintFormattedSortCode()
-    {
-        return implode("-", str_split($this->getSortCode(), 2));
-    }
+	/**
+	 * @param null $accountNumber
+	 */
+	private function setAccountNumber( $accountNumber ) {
 
-    /**
-     * @return null
-     */
-    public function getSortCode()
-    {
+		$this->accountNumber = $accountNumber;
+	}
 
-        if ($this->sortCode == null) {
-            throw new \Exception('No Sort Code Set');
-        }
+	public function getPrintFormattedSortCode() {
+		return implode( "-", str_split( $this->getSortCode(), 2 ) );
+	}
 
+	/**
+	 * @return null
+	 */
+	public function getSortCode() {
 
-        return substr($this->fillNumber($this->stripLeadingZeros($this->sortCode), 6), 0, 6);
-    }
+		if ( $this->sortCode == null ) {
+			throw new \Exception( 'No Sort Code Set' );
+		}
+		$sortCode = preg_replace( "/[^0-9]/", "", $this->sortCode );
 
-    /**
-     * @param null $sortCode
-     */
-    private function setSortCode($sortCode)
-    {
-        $this->sortCode = $sortCode;
-    }
+		return substr( $this->fillNumber( $this->stripLeadingZeros( $sortCode ), 6 ), 0, 6 );
+	}
 
-    public function accountSetCorrectly()
-    {
-        $this->errors = null;
-        try {
-            $this->getAccountNumber();
-        } catch (\Exception $e) {
-            $this->setError($e);
-        }
-        try {
-            $this->getSortCode();
-        } catch (\Exception $e) {
-            $this->setError($e);
-        }
-        try {
-            $this->getName();
-        } catch (\Exception $e) {
-            $this->setError($e);
-        }
+	/**
+	 * @param null $sortCode
+	 */
+	private function setSortCode( $sortCode ) {
+		$this->sortCode = $sortCode;
+	}
 
-        if ($this->getErrors(false)) {
-            return false;
-        }
+	public function accountSetCorrectly() {
+		$this->errors = null;
+		try {
+			$this->getAccountNumber();
+		} catch ( \Exception $e ) {
+			$this->setError( $e );
+		}
+		try {
+			$this->getSortCode();
+		} catch ( \Exception $e ) {
+			$this->setError( $e );
+		}
+		try {
+			$this->getName();
+		} catch ( \Exception $e ) {
+			$this->setError( $e );
+		}
 
-        return true;
-    }
+		if ( $this->getErrors( false ) ) {
+			return false;
+		}
 
-    private function setError($e)
-    {
-        if (is_callable(array($e, 'getMessage'))) {
-            $message = $e->getMessage();
-            if (isset($this->errors) && is_array($this->errors)) {
-                $this->errors[] = $message;
-            } else {
-                $this->errors = array();
-                $this->errors[] = $message;
-            }
-        }
-    }
+		return true;
+	}
 
-    /**
-     * @return null
-     */
-    public function getErrors($reload = true)
-    {
-        if ($reload) {
-            $this->accountSetCorrectly();
-        }
-        if (is_array($this->errors)) {
-            return join(' > ', $this->errors);
-        }
-        return false;
-    }
+	private function setError( $e ) {
+		if ( is_callable( array( $e, 'getMessage' ) ) ) {
+			$message = $e->getMessage();
+			if ( isset( $this->errors ) && is_array( $this->errors ) ) {
+				$this->errors[] = $message;
+			} else {
+				$this->errors   = array();
+				$this->errors[] = $message;
+			}
+		}
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getErrors( $reload = true ) {
+		if ( $reload ) {
+			$this->accountSetCorrectly();
+		}
+		if ( is_array( $this->errors ) ) {
+			return join( ' > ', $this->errors );
+		}
+
+		return false;
+	}
 }
