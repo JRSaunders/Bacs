@@ -48,7 +48,7 @@ class Lloyds extends Base {
 		$uniqueId = substr( substr( $stateRef, 0, 5 ) . '-' . time(), 0, 16 );
 		$this->output( "H,{$today},{$uniqueId}\n" );
 		$date->modify( "+ 2 day" );
-		$payDate       = $date->format( "Ymd" );
+		$payDate       = $this->getPaymentDate()->format( "Ymd" );
 		$accountNumber = $account->getAccountNumber();
 		$sortCode      = $account->getSortCode();
 		$this->output( "D,{$payDate},{$stateRef},{$sortCode}-{$accountNumber}\n" );
